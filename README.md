@@ -21,4 +21,5 @@ uv add <package>    # add a dependency
 - `PLAN.md` – progress and next step
 - `RUNS.md` – log of sessions
 - `note/` – one-page LaTeX note about the game, with a figure (`snake-note.pdf`)
+- `site-check/` – Playwright check of the course website menu (desktop and phone): screenshots, an empty broken-links list, and the scripts
 - `slides/` – five-slide presentation about the game (`snake.html`), with a note on how it is built (`NOTE.md`)

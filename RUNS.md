@@ -60,3 +60,11 @@
 - **Done:** `note/snake-note.tex` (pdfTeX from MiKTeX 24.1, packages geometry, fontenc, lmodern, xcolor, tikz, caption). The figure is drawn in TikZ: 12 segments, 8 solid and 4 ghosts at opacity 0.3, the same numbers as `SOLID` and the ghost opacity in `snake/index.html`. Output: `note/snake-note.pdf`.
 - **Checked:** `cd note && pdflatex -interaction=nonstopmode snake-note.tex` from a clean folder: "1 page", no warnings. Viewed the page as an image. First draft was 2 pages and printed `--no-project` with an en dash; fixed (removed a redundant table, moved the commands into a verbatim block).
 - **Not verified:** the figure's numbers are typed in the `.tex` (8, 0.3, 12), not read from the game, unlike the slides' figure; if `SOLID` changes, update them by hand. The 110 ms, 20×20 and 44 tests figures are also typed in.
+
+## 2026-10-14 (site check)
+
+- **Model:** Sonnet 5.5 (`claude-sonnet-5-5`), per the `/model` setting.
+- **Asked:** use Playwright to open https://tomasvicar.github.io/MLR-public/, click every menu link, check each page loads, show a screenshot of each page and a list of broken links; repeat on a narrow phone screen and say whether the menu is usable; then commit and push the screenshots, the broken-links list (empty if none) and the test script.
+- **Done:** scripts and results in `site-check/` (Playwright 1.64.0 through the installed Edge, uv 0.13.1). Desktop: 8 menu links, all 200. In-page links: 158 unique, all answered 200. Phone (360 × 740, emulated): menu usable; four layout rough edges listed in `site-check/README.md`. `site-check/broken-links.json` is `[]`.
+- **Checked:** a missing page returns 404 through the same request code, so the link check can fail. The first phone script mistook a page reload for a link tap and gave a wrong "navigated to Home"; I traced it with a hit-test and rewrote the wait to use the real page change. The documented desktop command was rerun as written from PowerShell (exit 0, same 8 results).
+- **Not verified:** the documented link and phone commands were not rerun as written (the committed scripts are the ones that produced the results); only one phone size was tried; a 200 from an external link does not prove the right content is behind it.
