@@ -1,0 +1,130 @@
+---
+pagetitle: "Snake, with a ghost tail"
+format:
+  revealjs:
+    theme: dark
+    embed-resources: true
+    slide-number: true
+    transition: fade
+---
+
+## Snake, with a ghost tail {.center}
+
+mlr-agent-lab
+
+::: {.notes}
+Welcome. This is a short tour of the Snake game we built in this project: what it is, its one twist, which files make it up, and how we know it works. Four slides after this one.
+:::
+
+## The game
+
+- One HTML file
+- Arrow keys steer
+- Top 5 scores are saved
+
+::: {.notes}
+The whole game is one file, snake/index.html. Open it in a browser, no install and no build. It is a 20 by 20 board and the snake moves every 110 milliseconds. Arrow keys or WASD steer, Space pauses, Enter restarts. The five best scores stay in the browser, so they are still there after a reload. They never leave your machine.
+:::
+
+## The twist
+
+::: {style="text-align:center"}
+{{< include snake-pic.svg >}}
+:::
+
+```{=html}
+<script>
+window.addEventListener("load", function () {
+  var svg = document.getElementById("snake-pic");
+  var anims = svg.querySelectorAll("animate");
+  function replay() { anims.forEach(function (a) { a.beginElement(); }); }
+  function onSlide() { return Reveal.getCurrentSlide() && Reveal.getCurrentSlide().contains(svg); }
+  if (!window.Reveal) return;
+  Reveal.on("slidechanged", function () { if (onSlide()) replay(); });
+  if (Reveal.isReady && Reveal.isReady()) { if (onSlide()) replay(); }
+  else Reveal.on("ready", function () { if (onSlide()) replay(); });
+});
+</script>
+```
+
+Older segments fade out. You can pass through them.
+
+::: {.notes}
+Here is the twist. Only the eight newest segments of the snake are solid. Older segments turn into faded ghosts, and you can pass through them. Walls and solid segments still end the game. The picture plays once when you arrive: the snake restarts short and grows back one segment per apple. Until it is eight long every segment is solid; after that, each apple adds one more ghost at the tail. It ends on the full snake and stays there. The length of eight is one constant in the code, so it is easy to tune.
+:::
+
+## The files
+
+```{=html}
+<div style="text-align:center">
+<svg viewBox="0 0 760 250" width="900" role="img" aria-label="The project files in three groups: snake (the game, its tests, its rules), slides, and the project notes">
+  <g font-family="inherit" text-anchor="middle">
+    <text x="125" y="26" fill="#9aa4b2" font-size="20" font-weight="700">snake/</text>
+    <text x="380" y="26" fill="#9aa4b2" font-size="20" font-weight="700">slides/</text>
+    <text x="635" y="26" fill="#9aa4b2" font-size="20" font-weight="700">project root</text>
+
+    <rect x="10" y="40" width="230" height="58" rx="10" fill="#1f2d24" stroke="#6ee787" stroke-width="3"/>
+    <text x="125" y="66" fill="#6ee787" font-size="21" font-weight="700">index.html</text>
+    <text x="125" y="88" fill="#bbb" font-size="16">the game</text>
+    <rect x="10" y="108" width="230" height="58" rx="10" fill="#232323" stroke="#9aa4b2" stroke-width="2"/>
+    <text x="125" y="134" fill="#e6e6e6" font-size="21" font-weight="700">test_snake.py</text>
+    <text x="125" y="156" fill="#bbb" font-size="16">44 tests</text>
+    <rect x="10" y="176" width="230" height="58" rx="10" fill="#232323" stroke="#9aa4b2" stroke-width="2"/>
+    <text x="125" y="202" fill="#e6e6e6" font-size="21" font-weight="700">README.md</text>
+    <text x="125" y="224" fill="#bbb" font-size="16">the rules</text>
+
+    <rect x="265" y="40" width="230" height="58" rx="10" fill="#232323" stroke="#9aa4b2" stroke-width="2"/>
+    <text x="380" y="66" fill="#e6e6e6" font-size="21" font-weight="700">snake.html</text>
+    <text x="380" y="88" fill="#bbb" font-size="16">this deck</text>
+    <rect x="265" y="108" width="230" height="58" rx="10" fill="#232323" stroke="#9aa4b2" stroke-width="2"/>
+    <text x="380" y="134" fill="#e6e6e6" font-size="21" font-weight="700">NOTE.md</text>
+    <text x="380" y="156" fill="#bbb" font-size="16">how it is built</text>
+
+    <rect x="520" y="40" width="230" height="58" rx="10" fill="#232323" stroke="#9aa4b2" stroke-width="2"/>
+    <text x="635" y="66" fill="#e6e6e6" font-size="21" font-weight="700">AGENTS.md</text>
+    <text x="635" y="88" fill="#bbb" font-size="16">working rules</text>
+    <rect x="520" y="108" width="230" height="58" rx="10" fill="#232323" stroke="#9aa4b2" stroke-width="2"/>
+    <text x="635" y="134" fill="#e6e6e6" font-size="21" font-weight="700">PLAN.md</text>
+    <text x="635" y="156" fill="#bbb" font-size="16">progress, next step</text>
+    <rect x="520" y="176" width="230" height="58" rx="10" fill="#232323" stroke="#9aa4b2" stroke-width="2"/>
+    <text x="635" y="202" fill="#e6e6e6" font-size="21" font-weight="700">RUNS.md</text>
+    <text x="635" y="224" fill="#bbb" font-size="16">what we asked, how we checked</text>
+  </g>
+</svg>
+</div>
+```
+
+::: {.notes}
+Where everything lives. In the snake folder: index.html is the game itself, test_snake.py holds the forty-four tests, and the README lists the rules. In the slides folder: this deck and a note on how it is built, with the exact sizes and the commands to rebuild it. At the top of the project: AGENTS.md has the working rules for the coding agent, PLAN.md says where we are and what comes next, and RUNS.md logs what we asked and how we checked each result.
+:::
+
+## Tested
+
+```{=html}
+<div style="text-align:center">
+<svg viewBox="0 0 760 230" width="900" role="img" aria-label="The game's real script runs in a test engine with a fake browser, and 44 tests pass">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#888"/>
+    </marker>
+  </defs>
+  <rect x="10" y="50" width="200" height="130" rx="14" fill="#1f2d24" stroke="#6ee787" stroke-width="3"/>
+  <text x="110" y="100" text-anchor="middle" fill="#6ee787" font-size="26" font-weight="700">index.html</text>
+  <text x="110" y="136" text-anchor="middle" fill="#bbb" font-size="20">the real game</text>
+  <line x1="215" y1="115" x2="275" y2="115" stroke="#888" stroke-width="3" marker-end="url(#arr)"/>
+  <rect x="280" y="50" width="200" height="130" rx="14" fill="#232323" stroke="#9aa4b2" stroke-width="3"/>
+  <text x="380" y="100" text-anchor="middle" fill="#e6e6e6" font-size="26" font-weight="700">test engine</text>
+  <text x="380" y="136" text-anchor="middle" fill="#bbb" font-size="20">fake browser</text>
+  <line x1="485" y1="115" x2="545" y2="115" stroke="#888" stroke-width="3" marker-end="url(#arr)"/>
+  <circle cx="650" cy="115" r="75" fill="#1f2d24" stroke="#6ee787" stroke-width="3"/>
+  <path d="M615,118 L640,143 L688,88" fill="none" stroke="#6ee787" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="650" y="222" text-anchor="middle" fill="#6ee787" font-size="26" font-weight="700">44 passed</text>
+</svg>
+</div>
+```
+
+Not yet played in a real browser.
+
+::: {.notes}
+How do we know it works? We run the game's real script, unchanged, inside a small JavaScript engine with a fake browser around it, and step the game by hand. Forty-four tests check movement, walls, eating, the ghost boundary, pause and restart, and the score table. We also broke the game on purpose to confirm the tests catch it. What we have not done is play it in a real browser, so how it looks and feels is still unchecked. That is the next step, along with tuning the ghost length.
+:::

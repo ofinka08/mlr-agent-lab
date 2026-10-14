@@ -39,3 +39,24 @@
 - **Done:** `snake/` now has a single game file, `index.html`, with the ghost tail as one of its rules. Removed the other game file, its tests and its storage names, and rewrote `snake/README.md` and `PLAN.md` for one game. Earlier entries in this log are history and are left as written.
 - **Checked:** `uv run --no-project --with quickjs --with pytest pytest snake -q` gave 44 passed (quickjs 1.19.4, pytest 8.0.0).
 - **Not verified:** the game in a real browser.
+
+## 2026-10-14 (slides)
+
+- **Model:** Sonnet 5.5 (`claude-sonnet-5-5`), per the `/model` setting.
+- **Asked:** a short Quarto presentation about the game with an animation; then, against the written requirements: five slides with little text and speaker notes, the animation's first frame showing the final state with the last frame held, and a note with a dimensions table, a figure, rebuild commands, and links to the viewer and the script. Then: drop the head animation (unrelated to the game), animate the snake picture from the "twist" slide instead, and replace the animation slide with something about the game's files.
+- **Done:** installed Quarto 1.10.19 (portable, `C:\dev\tools\quarto`, user PATH). Slides in `slides/snake.qmd`, rendered to `slides/snake.html`: title, the game, the twist (animated snake), the files, tested. Note in `slides/NOTE.md`. `slides/snake_pic.py` builds the animated picture (`snake-pic.svg`) and `snake-figure.svg`, reads `SOLID` and the ghost opacity from `snake/index.html`, and checks that slides, note, figures and game agree.
+- **Fixed against the requirements:** the first version had 7 slides, no speaker notes, a looping animation that started closed, and no note. An empty extra slide appeared when notes came before the first heading; fixed. A mouth-head animation I had added was dropped as unrelated to the game.
+- **Checked:**
+  - `quarto render slides/snake.qmd` gives 5 `<section>` slides and 5 speaker-notes blocks.
+  - `uv run --no-project slides/snake_pic.py --check` printed "ok" (uv 0.13.1); on a broken copy (game constant changed, animation set to loop) it reported 4 problems and exited 1.
+  - Headless Edge screenshots of slide 3 at 4 points in time: snake restarted at 4 segments, then 9, then the full 12 held (8 solid + 4 ghosts). Slide 4 (files) and the figure looked right.
+  - First frame: verified from the file (every animation's first and last value equals the shape shown without animation), not from a screenshot at time zero.
+  - Not verified: pressing `S` for the speaker-notes view, and the animation replaying when you navigate back to slide 3 in a live browser.
+
+## 2026-10-14 (LaTeX note)
+
+- **Model:** Sonnet 5.5 (`claude-sonnet-5-5`), per the `/model` setting.
+- **Asked:** a one-page LaTeX note about the game, with a figure; compile it and show the PDF.
+- **Done:** `note/snake-note.tex` (pdfTeX from MiKTeX 24.1, packages geometry, fontenc, lmodern, xcolor, tikz, caption). The figure is drawn in TikZ: 12 segments, 8 solid and 4 ghosts at opacity 0.3, the same numbers as `SOLID` and the ghost opacity in `snake/index.html`. Output: `note/snake-note.pdf`.
+- **Checked:** `cd note && pdflatex -interaction=nonstopmode snake-note.tex` from a clean folder: "1 page", no warnings. Viewed the page as an image. First draft was 2 pages and printed `--no-project` with an en dash; fixed (removed a redundant table, moved the commands into a verbatim block).
+- **Not verified:** the figure's numbers are typed in the `.tex` (8, 0.3, 12), not read from the game, unlike the slides' figure; if `SOLID` changes, update them by hand. The 110 ms, 20×20 and 44 tests figures are also typed in.

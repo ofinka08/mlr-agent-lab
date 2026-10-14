@@ -1,0 +1,17 @@
+<svg id="snake-pic" viewBox="0 0 640 150" width="800" role="img" aria-label="A snake grows one segment at a time: the 8 newest segments are solid, older ones are faded ghosts">
+<rect width="640" height="150" rx="12" fill="#1b1b1b"/>
+<rect x="500" y="40" width="40" height="40" fill="#6ee787" opacity="1"/>
+<rect x="456" y="40" width="40" height="40" fill="#3fb950" opacity="1"/>
+<rect x="412" y="40" width="40" height="40" fill="#3fb950" opacity="1"/>
+<rect x="368" y="40" width="40" height="40" fill="#3fb950" opacity="1"><animate attributeName="opacity" begin="indefinite" dur="5.5s" repeatCount="1" fill="freeze" calcMode="discrete" keyTimes="0;0.0909;0.2182;1" values="1;0;1;1"/></rect>
+<rect x="324" y="40" width="40" height="40" fill="#3fb950" opacity="1"><animate attributeName="opacity" begin="indefinite" dur="5.5s" repeatCount="1" fill="freeze" calcMode="discrete" keyTimes="0;0.0909;0.3;1" values="1;0;1;1"/></rect>
+<rect x="280" y="40" width="40" height="40" fill="#3fb950" opacity="1"><animate attributeName="opacity" begin="indefinite" dur="5.5s" repeatCount="1" fill="freeze" calcMode="discrete" keyTimes="0;0.0909;0.3818;1" values="1;0;1;1"/></rect>
+<rect x="236" y="40" width="40" height="40" fill="#3fb950" opacity="1"><animate attributeName="opacity" begin="indefinite" dur="5.5s" repeatCount="1" fill="freeze" calcMode="discrete" keyTimes="0;0.0909;0.4636;1" values="1;0;1;1"/></rect>
+<rect x="192" y="40" width="40" height="40" fill="#3fb950" opacity="1"><animate attributeName="opacity" begin="indefinite" dur="5.5s" repeatCount="1" fill="freeze" calcMode="discrete" keyTimes="0;0.0909;0.5455;1" values="1;0;1;1"/></rect>
+<rect x="148" y="40" width="40" height="40" fill="#3fb950" opacity="0.3"><animate attributeName="opacity" begin="indefinite" dur="5.5s" repeatCount="1" fill="freeze" calcMode="discrete" keyTimes="0;0.0909;0.6273;1" values="0.3;0;0.3;0.3"/></rect>
+<rect x="104" y="40" width="40" height="40" fill="#3fb950" opacity="0.3"><animate attributeName="opacity" begin="indefinite" dur="5.5s" repeatCount="1" fill="freeze" calcMode="discrete" keyTimes="0;0.0909;0.7091;1" values="0.3;0;0.3;0.3"/></rect>
+<rect x="60" y="40" width="40" height="40" fill="#3fb950" opacity="0.3"><animate attributeName="opacity" begin="indefinite" dur="5.5s" repeatCount="1" fill="freeze" calcMode="discrete" keyTimes="0;0.0909;0.7909;1" values="0.3;0;0.3;0.3"/></rect>
+<rect x="16" y="40" width="40" height="40" fill="#3fb950" opacity="0.3"><animate attributeName="opacity" begin="indefinite" dur="5.5s" repeatCount="1" fill="freeze" calcMode="discrete" keyTimes="0;0.0909;0.8727;1" values="0.3;0;0.3;0.3"/></rect>
+<text x="366" y="118" text-anchor="middle" fill="#e6e6e6" font-size="22" font-weight="700">8 solid<animate attributeName="opacity" begin="indefinite" dur="5.5s" repeatCount="1" fill="freeze" calcMode="discrete" keyTimes="0;0.0909;0.5455;1" values="1;0;1;1"/></text>
+<text x="102" y="118" text-anchor="middle" fill="#9aa4b2" font-size="22" font-weight="700">ghosts<animate attributeName="opacity" begin="indefinite" dur="5.5s" repeatCount="1" fill="freeze" calcMode="discrete" keyTimes="0;0.0909;0.6273;1" values="1;0;1;1"/></text>
+</svg>

@@ -20,3 +20,5 @@ uv add <package>    # add a dependency
 - `AGENTS.md` – working rules for agents (`CLAUDE.md` loads it)
 - `PLAN.md` – progress and next step
 - `RUNS.md` – log of sessions
+- `note/` – one-page LaTeX note about the game, with a figure (`snake-note.pdf`)
+- `slides/` – five-slide presentation about the game (`snake.html`), with a note on how it is built (`NOTE.md`)
