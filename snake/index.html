@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Snake</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #111; color: #eee; font-family: system-ui, sans-serif; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+  canvas { background: #1b1b1b; border: 2px solid #444; max-width: 95vw; max-height: 75vh; }
+  #bar { display: flex; gap: 24px; font-size: 18px; }
+  #board { text-align: center; }
+  #board h3 { margin: 0 0 4px; font-size: 15px; color: #bbb; }
+  #scores { display: inline-block; margin: 0; padding-left: 24px; text-align: left; min-width: 150px; }
+  #scores span { color: #888; font-size: 13px; margin-left: 8px; }
+  #scores .none { list-style: none; margin-left: -24px; color: #888; }
+  #hint { color: #999; font-size: 14px; }
+</style>
+</head>
+<body>
+<div id="bar"><span>Score: <b id="score">0</b></span><span>Best: <b id="best">0</b></span></div>
+<canvas id="c" width="400" height="400"></canvas>
+<div id="board"><h3>High scores</h3><ol id="scores"></ol></div>
+<div id="hint">Only the 8 newest segments are solid; faded ones are ghosts you can pass through.<br>Arrow keys / WASD to move · Space to pause · Enter to restart</div>
+<script>
+"use strict";
+const COLS = 20, ROWS = 20, CELL = 20, TICK_MS = 110;
+const SOLID = 8; // only the head and the next SOLID-1 segments are solid; older ones are ghosts
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+const scoreEl = document.getElementById("score");
+const bestEl = document.getElementById("best");
+
+const scoresEl = document.getElementById("scores");
+const STORE_KEY = "snake-scores", LEGACY_KEY = "snake-best", MAX_SCORES = 5;
+
+// Keep only valid entries, highest first (ties keep the older one first), top MAX_SCORES.
+function cleanScores(list) {
+  return list
+    .filter(e => e && Number.isInteger(e.score) && e.score > 0)
+    .map(e => ({ score: e.score, at: typeof e.at === "string" ? e.at : null }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, MAX_SCORES);
+}
+
+function loadScores() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw !== null) {
+      const list = JSON.parse(raw);
+      return Array.isArray(list) ? cleanScores(list) : [];
+    }
+    const legacy = Number(localStorage.getItem(LEGACY_KEY)); // older single best score
+    if (legacy > 0) return cleanScores([{ score: legacy, at: null }]);
+  } catch (e) {}
+  return [];
+}
+
+function renderScores() {
+  best = scores.length ? scores[0].score : 0;
+  bestEl.textContent = best;
+  scoresEl.innerHTML = scores.length
+    ? scores.map(e => `<li><b>${e.score}</b> <span>${e.at ? new Date(e.at).toLocaleDateString() : "earlier"}</span></li>`).join("")
+    : '<li class="none">No scores yet</li>';
+}
+
+function addScore(s) {
+  scores = cleanScores([...scores, { score: s, at: new Date().toISOString() }]);
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(scores)); } catch (e) {}
+  renderScores();
+}
+
+let best = 0;
+let scores = loadScores();
+renderScores();
+
+let snake, dir, nextDir, food, score, state, timer; // state: "ready" | "running" | "paused" | "over"
+
+function reset() {
+  snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
+  dir = { x: 1, y: 0 };
+  nextDir = dir;
+  score = 0;
+  scoreEl.textContent = score;
+  food = placeFood();
+  state = "ready";
+  draw();
+}
+
+function placeFood() {
+  const free = [];
+  for (let x = 0; x < COLS; x++)
+    for (let y = 0; y < ROWS; y++)
+      if (!snake.some(s => s.x === x && s.y === y)) free.push({ x, y });
+  return free.length ? free[Math.floor(Math.random() * free.length)] : null;
+}
+
+function step() {
+  dir = nextDir;
+  const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+  const eating = food && head.x === food.x && head.y === food.y;
+  const hitWall = head.x < 0 || head.y < 0 || head.x >= COLS || head.y >= ROWS;
+  if (hitWall) return gameOver();
+  // Build the snake as it will be after this move, then collide the head
+  // only with the solid segments (indices 1..SOLID-1); the rest are ghosts.
+  const next = [head, ...snake];
+  if (!eating) next.pop();
+  if (next.slice(1, SOLID).some(s => s.x === head.x && s.y === head.y)) return gameOver();
+  snake = next;
+  if (eating) {
+    score++;
+    scoreEl.textContent = score;
+    food = placeFood();
+    if (!food) return gameOver(); // board full: you win
+  }
+  draw();
+}
+
+function gameOver() {
+  state = "over";
+  clearInterval(timer);
+  if (score > 0) addScore(score);
+  draw();
+}
+
+function start() {
+  state = "running";
+  clearInterval(timer);
+  timer = setInterval(step, TICK_MS);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (food) {
+    ctx.fillStyle = "#e5484d";
+    ctx.fillRect(food.x * CELL + 2, food.y * CELL + 2, CELL - 4, CELL - 4);
+  }
+  snake.forEach((s, i) => {
+    ctx.globalAlpha = i < SOLID ? 1 : 0.3; // ghost segments are faded and harmless
+    ctx.fillStyle = i === 0 ? "#6ee787" : "#3fb950";
+    ctx.fillRect(s.x * CELL + 1, s.y * CELL + 1, CELL - 2, CELL - 2);
+  });
+  ctx.globalAlpha = 1;
+  const msg = { ready: "Press an arrow key to start", paused: "Paused", over: "Game over — Enter to restart" }[state];
+  if (msg) {
+    ctx.fillStyle = "rgba(0,0,0,.6)";
+    ctx.fillRect(0, canvas.height / 2 - 24, canvas.width, 48);
+    ctx.fillStyle = "#fff";
+    ctx.font = "20px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
+  }
+}
+
+const KEYS = {
+  ArrowUp: { x: 0, y: -1 }, w: { x: 0, y: -1 },
+  ArrowDown: { x: 0, y: 1 }, s: { x: 0, y: 1 },
+  ArrowLeft: { x: -1, y: 0 }, a: { x: -1, y: 0 },
+  ArrowRight: { x: 1, y: 0 }, d: { x: 1, y: 0 },
+};
+
+document.addEventListener("keydown", e => {
+  const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  if (key === "Enter") { clearInterval(timer); reset(); return; }
+  if (key === " ") {
+    e.preventDefault();
+    if (state === "running") { state = "paused"; clearInterval(timer); draw(); }
+    else if (state === "paused") start();
+    return;
+  }
+  const d = KEYS[key];
+  if (!d) return;
+  e.preventDefault();
+  if (state === "over" || state === "paused") return;
+  const reversal = d.x === -dir.x && d.y === -dir.y;
+  if (state === "ready") {
+    // Before the first move any direction is allowed; turn the snake around if needed.
+    if (reversal) snake.reverse();
+    dir = d;
+    nextDir = d;
+    start();
+    return;
+  }
+  // Ignore reversals against the direction actually moved this tick.
+  if (reversal) return;
+  nextDir = d;
+});
+
+reset();
+</script>
+</body>
+</html>
